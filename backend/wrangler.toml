@@ -1,0 +1,58 @@
+# {
+#   "$schema": "node_modules/wrangler/config-schema.json",
+#   "name": "backend",
+# name = "worker-script"
+
+# Entry Point.
+main = "src/index.ts"
+  # main="src/index.ts"
+#   "compatibility_date": "2025-02-07"
+#   // "compatibility_flags": [
+#   //   "nodejs_compat"
+#   // ],
+#   // "vars": {
+#   //   "MY_VAR": "my-variable"
+#   // },
+#   // "kv_namespaces": [
+#   //   {
+#   //     "binding": "MY_KV_NAMESPACE",
+#   //     "id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+#   //   }
+#   // ],
+#   // "r2_buckets": [
+#   //   {
+#   //     "binding": "MY_BUCKET",
+#   //     "bucket_name": "my-bucket"
+#   //   }
+#   // ],
+#   // "d1_databases": [
+#   //   {
+#   //     "binding": "MY_DB",
+#   //     "database_name": "my-database",
+#   //     "database_id": ""
+#   //   }
+#   // ],
+#   // "ai": {
+#   //   "binding": "AI"
+#   // },
+#   // "observability": {
+#   //   "enabled": true,
+#   //   "head_sampling_rate": 1
+#   // }
+# }
+
+
+
+name = "backend"
+compatibility_date ="2023-12-01"
+
+[vars]
+
+DATABASE_URL="prisma://accelerate.prisma-data.net/?api_key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfa2V5IjoiZmZmZDZiMGEtZGY5NC00ZDVhLThkNGEtMzlmMTliNWI4ZDk5IiwidGVuYW50X2lkIjoiMTU4M2Y0OWE3NDIyY2E1OGJjZjFiM2M5MTkxOWE2NWI1MTNlN2ViYjY4NzQ2NzYxMjYwODM2NGU1MGVjNjQyNyIsImludGVybmFsX3NlY3JldCI6IjRjNGY5NmZmLWFhZjYtNGVlMy05ZjU5LWMxODg4NzliN2ZhZCJ9.XOULNs9AL4-3S3wjalErHvVqX3jAiAGAn9JIi7UugkE"
+
+
+
+# DIRECT_URL="<YOUR_DATABASE_CONNECTION_STRING>"
+
+JWT_SECRET = "yashsecret"
+# whenever we run "npm run dev" command the env variable is picked from here [vars] and my variable
