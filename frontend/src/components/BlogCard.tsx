@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
-import { Appbar } from "./Appbar";
- 
+// import { Appbar } from "./Appbar";
+
 interface BlogCardProps {
   id: number
   authorName: string;
-  title: string; 
+  title: string;
   content: string;
   publishedDate: string
 }//1:02:01
@@ -34,7 +34,7 @@ export const BlogCard = ({
         <div className="pl-2 flex justify-center flex-col font-thin text-slate-500 text-sm">
           {publishedDate}
         </div>
-        
+
       </div>
 
       <div className="text-xl font-semibold pt-2">
