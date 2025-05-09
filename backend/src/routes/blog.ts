@@ -12,7 +12,7 @@ export const blogRouter=new Hono<{
      JWT_SECRET: string
   },
   Variables:{
-    responseId:string
+    userId:string
   }
 }>();
  
@@ -23,163 +23,142 @@ blogRouter.use('/*',async(c,next)=>{
   // if header is correct,we  can proceed
   // if not ,we return the user 403 status code
 
-  const header=c.req.header("Authorization") || "";
+  const authHeader=c.req.header("authorization") || "";
   // const token=header.split("")[1]     // "bearer" "token"
   // console.log(token)
-  try{
-    
-    const response= await verify(header,c.env.JWT_SECRET)
-
-    if(response){
-      // @ts-ignore
-      c.set("responseId",response.id);
-      await next()
-
+ try {
+        const user = await verify(authHeader, c.env.JWT_SECRET);
+        if (user) {
+            // @ts-ignore
+            c.set("userId", user.id);
+            await next();
+        } else {
+            c.status(403);
+            return c.json({
+                message: "You are not logged in"
+            })
+        }
+    } catch(e) {
+        c.status(403);
+        return c.json({
+            message: "You are not logged in"
+        })
     }
-    else{ 
+});
 
-      c.status(403) 
-    
-      return c.json({error:"unauthorized"})
-    
+blogRouter.post('/', async (c) => {
+    const body = await c.req.json();
+    const { success } = createBlogInput.safeParse(body);
+    if (!success) {
+        c.status(411);
+        return c.json({
+            message: "Inputs not correct"
+        })
     }
-  }
-  catch(e){
-    c.status(403) 
-    
-    return c.json({error:"unauthorized"})
-  } 
 
-    
-  
-}) 
+    const authorId = c.get("userId");
+    const prisma = new PrismaClient({
+      datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate())
 
-
- blogRouter.post('/',async (c)=> { 
-  
-  const prisma = new PrismaClient({
-    datasourceUrl:c.env.DATABASE_URL ,
-  }).$extends(withAccelerate())
-  
-  const body=await c.req.json();
-  const {success}=createBlogInput.safeParse(body);
-  if(!success){
-    c.status(411);
-    return c.json({
-      message:"Incorrect Inputs"
+    const blog = await prisma.blog.create({
+        data: {
+            title: body.title,
+            content: body.content,
+            authorId: Number(authorId)
+        }
     })
-  }
- const authorId=c.get('responseId')
-  const blog=await prisma.blog.create({
-    data:{
-      title:body.title,
-      content:body.content,
-      authorId:Number(authorId)
-    }
-       
-  }) 
 
-   
-  return c.json({
-    id:blog.id
-  })    
- 
+    return c.json({
+        id: blog.id
+    })
 })
+ 
 
-blogRouter.put('/',async(c)=>{ 
-  
-  const prisma = new PrismaClient({
-    datasourceUrl:c.env.DATABASE_URL ,
-  }).$extends(withAccelerate())
-  
-  const body=await c.req.json();
-  const {success}=updateBlogInput.safeParse(body);
-  if(!success){
-    c.status(411);
-    return c.json({
-      message:"Incorrect Inputs"
-    })
-  }
-  const blog=await prisma.blog.update({
-
-    where:{
-        id:body.id 
-    },
-    
-    data:{
-      title:body.title,
-      content:body.content
+blogRouter.put('/', async (c) => {
+    const body = await c.req.json();
+    const { success } = updateBlogInput.safeParse(body);
+    if (!success) {
+        c.status(411);
+        return c.json({
+            message: "Inputs not correct"
+        })
     }
-       
-  })
 
-   
-  return c.json({
-    id:blog.id
-  }) 
+    const prisma = new PrismaClient({
+      datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate())
 
+    const blog = await prisma.blog.update({
+        where: {
+            id: body.id
+        }, 
+        data: {
+            title: body.title,
+            content: body.content
+        }
+    })
+
+    return c.json({
+        id: blog.id
+    })
 }) 
 
 // add pagination
-blogRouter.get('/bulk',async (c)=>{
+blogRouter.get('/bulk', async (c) => {
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate())
+    const blogs = await prisma.blog.findMany({
+        select: {
+            content: true,
+            title: true,
+            id: true,
+            author: {
+                select: {
+                    name: true
+                }
+            }
+        }
+    });
 
-  const prisma = new PrismaClient({
-    datasourceUrl:c.env.DATABASE_URL ,
-  }).$extends(withAccelerate())
-
-  const blogs=await prisma.blog.findMany({
-       select:{
-         content:true,
-         id:true,
-         title:true,
-         author:{
-           select:{
-             name:true
-           }
-         }
-       }
-
-  });
-  console.log(blogs)
-  return c.json({blogs}) 
-
-})  
-
-blogRouter.get('/:id', async (c)=>{ 
-
-  const prisma = new PrismaClient({
-    datasourceUrl:c.env.DATABASE_URL ,
-  }).$extends(withAccelerate())
-  
-  const id=await c.req.param("id");
-  
-  try{
-    const blog=await prisma.blog.findFirst({
-      where:{
-          id:Number(id)
-      },  
-      select:{
-         id:true,
-         title:true,
-         content:true,
-         author:{
-             select:{
-               name:true
-             }
-         }
-      }
-    })
     return c.json({
-       blog
-    }) 
-  }catch(e){
-    c.status(411)
-  return c.json({
-    message:"Error while fetching blog post"+e
-  })
-  }
+        blogs
+    })
+})
 
-})  
+blogRouter.get('/:id', async (c) => {
+    const id = c.req.param("id");
+    const prisma = new PrismaClient({
+      datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate())
 
+    try {
+        const blog = await prisma.blog.findFirst({
+            where: {
+                id: Number(id)
+            },
+            select: {
+                id: true,
+                title: true,
+                content: true,
+                author: {
+                    select: {
+                        name: true
+                    }
+                }
+            }
+        })
+    
+        return c.json({
+            blog
+        });
+    } catch(e) {
+        c.status(411); // 4
+        return c.json({
+            message: "Error while fetching blog post"
+        });
+    }
+})
 
 

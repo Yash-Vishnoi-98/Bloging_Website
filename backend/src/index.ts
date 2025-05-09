@@ -11,7 +11,7 @@ const app = new Hono<{
   }
 }>();
  
- 
+  
 // app/v1/user/signup
 // app/v1/user/signin
 // app/v1/blog/....
@@ -20,10 +20,6 @@ const app = new Hono<{
 app.use('/*', cors())
 app.route("/api/v1/user",userRouter)
 app.route("/api/v1/blog",blogRouter)
-
-// app.use('/message/*', async (c, next) => {
-//   await next()
-// })
-
+ 
 export default app
  
