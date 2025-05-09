@@ -1,11 +1,9 @@
 import { Hono } from 'hono'
-import { decode, sign, verify } from 'hono/jwt'
-import { PrismaClient } from '@prisma/client/edge' 
-import { withAccelerate } from '@prisma/extension-accelerate'
+ 
 import { userRouter } from './routes/user'
 import { blogRouter } from './routes/blog'
 import { cors } from 'hono/cors'
-
+ 
 const app = new Hono<{ 
   Bindings:{
      DATABASE_URL: string
@@ -13,7 +11,7 @@ const app = new Hono<{
   }
 }>();
  
-
+ 
 // app/v1/user/signup
 // app/v1/user/signin
 // app/v1/blog/....
@@ -22,6 +20,10 @@ const app = new Hono<{
 app.use('/*', cors())
 app.route("/api/v1/user",userRouter)
 app.route("/api/v1/blog",blogRouter)
+
+// app.use('/message/*', async (c, next) => {
+//   await next()
+// })
 
 export default app
  

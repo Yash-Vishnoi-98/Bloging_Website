@@ -3,7 +3,7 @@ import { Appbar } from "../components/Appbar"
 import { BACKEND_URL } from "../config"
 import { ChangeEvent, useState } from "react"
 import { useNavigate } from "react-router-dom"
-
+ 
 export const Publish = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -13,7 +13,7 @@ export const Publish = () => {
     <div><Appbar />
       <div className="flex justify-center w-full pt-8">
         <div className="max-w-screen-lg w-full">
-          {/* <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Title</label> */}
+         
           <input onChange={(e) => {
             setTitle(e.target.value)
           }} type="text" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Your Title">

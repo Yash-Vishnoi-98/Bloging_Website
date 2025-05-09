@@ -23,7 +23,7 @@ blogRouter.use('/*',async(c,next)=>{
   // if header is correct,we  can proceed
   // if not ,we return the user 403 status code
 
-  const header=c.req.header("authorization") || "";
+  const header=c.req.header("Authorization") || "";
   // const token=header.split("")[1]     // "bearer" "token"
   // console.log(token)
   try{
@@ -140,7 +140,7 @@ blogRouter.get('/bulk',async (c)=>{
        }
 
   });
-
+  console.log(blogs)
   return c.json({blogs}) 
 
 })  
@@ -157,7 +157,7 @@ blogRouter.get('/:id', async (c)=>{
     const blog=await prisma.blog.findFirst({
       where:{
           id:Number(id)
-      }, 
+      },  
       select:{
          id:true,
          title:true,
@@ -170,7 +170,7 @@ blogRouter.get('/:id', async (c)=>{
       }
     })
     return c.json({
-       blog:blog
+       blog
     }) 
   }catch(e){
     c.status(411)

@@ -1,13 +1,14 @@
 import { Link } from "react-router-dom";
 import { Appbar } from "./Appbar";
-
+ 
 interface BlogCardProps {
   id: number
   authorName: string;
-  title: string;
+  title: string; 
   content: string;
   publishedDate: string
 }//1:02:01
+
 export const BlogCard = ({
   id,
   authorName,
@@ -20,17 +21,20 @@ export const BlogCard = ({
 
       <div className="flex">
 
-        <Avatar name={authorName} />
+        <Avatar size={"small"} name={authorName} />
 
         <div className="font-extralight pl-2 text-sm flex justify-center flex-col">
           {authorName}
         </div>
+
         <div className="flex justify-center flex-col pl-2">
           <Circle />
         </div>
+
         <div className="pl-2 flex justify-center flex-col font-thin text-slate-500 text-sm">
           {publishedDate}
         </div>
+        
       </div>
 
       <div className="text-xl font-semibold pt-2">
